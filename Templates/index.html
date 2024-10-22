@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Resume Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>AI-Powered Resume Generator</h1>
+        <form id="resume-form">
+            <input type="text" id="name" placeholder="Name" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="text" id="phone" placeholder="Phone Number" required>
+            <input type="text" id="role" placeholder="Job Role" required>
+            <button type="submit">Generate Resume</button>
+        </form>
+        <div id="resume-output" class="output hidden">
+            <h2>Generated Resume</h2>
+            <p><strong>Name:</strong> <span id="output-name"></span></p>
+            <p><strong>Email:</strong> <span id="output-email"></span></p>
+            <p><strong>Phone:</strong> <span id="output-phone"></span></p>
+            <h3>Objective</h3>
+            <p id="output-objective"></p>
+            <h3>Skills</h3>
+            <p id="output-skills"></p>
+            <h3>Education</h3>
+            <p id="output-education"></p>
+            <h3>Experience</h3>
+            <p id="output-experience"></p>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#resume-form').on('submit', function(event) {
+                event.preventDefault();
+
+                const name = $('#name').val();
+                const email = $('#email').val();
+                const phone = $('#phone').val();
+                const role = $('#role').val();
+
+                $.ajax({
+                    url: '/generate',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ name, email, phone, role }),
+                    success: function(resume) {
+                        $('#output-name').text(resume.name);
+                        $('#output-email').text(resume.email);
+                        $('#output-phone').text(resume.phone);
+                        $('#output-objective').text(resume.objective);
+                        $('#output-skills').text(resume.skills);
+                        $('#output-education').text(resume.education);
+                        $('#output-experience').text(resume.experience);
+                        $('#resume-output').removeClass('hidden');
+                    },
+                    error: function(xhr) {
+                        alert('Error generating resume: ' + xhr.responseJSON.error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
